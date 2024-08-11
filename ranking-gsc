@@ -1,0 +1,33 @@
+# Monitorización de Rankings con la API de Google Search Console
+# Instalar la Biblioteca de Google: Ejecuta el siguiente código en una celda.
+
+!pip install google-api-python-client oauth2client
+
+# Autenticación y Uso de la API: Configura la autenticación y usa la API de Google Search Console.
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
+# Sube tu archivo JSON de credenciales de Google
+from google.colab import files
+uploaded = files.upload()
+
+credentials = service_account.Credentials.from_service_account_file(
+    'nombre_de_tu_archivo.json',
+    scopes=['https://www.googleapis.com/auth/webmasters.readonly']
+)
+
+service = build('webmasters', 'v3', credentials=credentials)
+
+site_url = 'https://example.com'
+response = service.searchanalytics().query(
+    siteUrl=site_url,
+    body={
+        'startDate': '2024-01-01',
+        'endDate': '2024-01-31',
+        'dimensions': ['query'],
+        'rowLimit': 100
+    }
+).execute()
+
+for row in response['rows']:
+    print(f"Query: {row['keys'][0]}, Clicks: {row['clicks']}, Impressions: {row['impressions']}")
