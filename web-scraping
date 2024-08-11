@@ -1,0 +1,14 @@
+# Ejemplo: Extracción de Datos (Web Scraping)
+# Importar Librerías: Ejecuta el siguiente código en una celda para importar las bibliotecas necesarias.
+
+import requests
+from bs4 import BeautifulSoup
+
+# Escribir el Script de Web Scraping: Copia y pega el siguiente código en la siguiente celda y ejecútalo.
+
+url = 'https://example-blog.com'
+response = requests.get(url)
+soup = BeautifulSoup(response.content, 'html.parser')
+
+for title in soup.find_all('h2', class_='post-title'):
+    print(title.get_text())
