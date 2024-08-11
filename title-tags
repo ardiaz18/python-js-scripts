@@ -1,0 +1,22 @@
+# Este script utiliza BeautifulSoup para analizar el HTML de las páginas web y extraer las etiquetas de título y meta descripciones.
+
+import requests
+from bs4 import BeautifulSoup
+
+# URL de la página que deseas analizar
+url = "https://www.ejemplo.com"
+
+# Solicitar la página
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Extraer el título
+title = soup.find('title').get_text()
+print(f"Título: {title}")
+
+# Extraer la meta descripción
+meta_description = soup.find('meta', attrs={'name': 'description'})
+if meta_description:
+    print(f"Meta Descripción: {meta_description.get('content')}")
+else:
+    print("No se encontró meta descripción.")
