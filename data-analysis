@@ -1,0 +1,20 @@
+# Análisis de Datos con Pandas
+# Importar Librerías: Ejecuta el siguiente código en una celda.
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Subir un Archivo CSV: Puedes subir un archivo CSV directamente a Google Colab. Haz clic en el icono de carpeta en el lado izquierdo, luego en el icono de subida de archivos, y selecciona tu archivo CSV.
+# Cargar y Analizar los Datos: Usa el siguiente código para cargar y analizar los datos del CSV.
+
+from google.colab import files
+uploaded = files.upload()
+
+df = pd.read_csv('nombre_de_tu_archivo.csv')
+summary = df.groupby('source').sum()
+
+summary.plot(kind='bar')
+plt.title('Tráfico por Fuente')
+plt.xlabel('Fuente')
+plt.ylabel('Visitas')
+plt.show()
