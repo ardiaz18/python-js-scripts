@@ -1,0 +1,30 @@
+#Automatización del Envío de URLs para Indexación en Google
+#Descripción: Este script automatiza el envío de URLs a Google para su indexación utilizando la API de Google Indexing. Es útil para asegurarte de que tus nuevas páginas o actualizaciones se indexen rápidamente.
+
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
+# Credenciales del servicio
+credentials = service_account.Credentials.from_service_account_file('tu-archivo-de-credenciales.json')
+scoped_credentials = credentials.with_scopes(['https://www.googleapis.com/auth/indexing'])
+service = build('indexing', 'v3', credentials=scoped_credentials)
+
+def submit_url_to_google(url):
+    body = {
+        "url": url,
+        "type": "URL_UPDATED"
+    }
+    response = service.urlNotifications().publish(body=body).execute()
+    print(response)
+
+# Ejemplo de uso
+submit_url_to_google("https://www.ejemplo.com/nueva-pagina")
+
+#Cómo Utilizarlo
+##Configura las credenciales: Debes obtener las credenciales de servicio desde la consola de Google Cloud.
+##Introduce la URL: Cambia el valor de url a la URL que deseas enviar para indexación.
+##Ejecuta el código: El script enviará la URL a Google para que se indexe o se actualice en su índice.
+
+#Casos de Uso
+##SEO: Ideal para asegurar que el contenido nuevo o actualizado se indexe rápidamente en Google.
+##Control de Indexación: Útil para gestionar la indexación de contenidos importantes en tiempo real.

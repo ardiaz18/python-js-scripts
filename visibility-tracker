@@ -1,0 +1,31 @@
+#Análisis de Popularidad de Contenidos en Redes Sociales
+#Descripción: Este script te permite analizar la popularidad de URLs específicas en las redes sociales (por ejemplo, cuántas veces ha sido compartida una URL). Aquí usamos SharedCount API, que es una herramienta popular para este tipo de análisis.
+
+import requests
+
+# API Key de SharedCount (obtén la tuya en https://www.sharedcount.com/)
+api_key = "TU_API_KEY_AQUÍ"
+
+def check_social_shares(url):
+    api_url = f"https://api.sharedcount.com/v1.0/?url={url}&apikey={api_key}"
+    response = requests.get(api_url)
+    data = response.json()
+    
+    print(f"Análisis de URL: {url}")
+    print(f"Facebook Total: {data['Facebook']['total_count']}")
+    print(f"LinkedIn: {data['LinkedIn']}")
+    print(f"Pinterest: {data['Pinterest']}")
+    print(f"StumbleUpon: {data['StumbleUpon']}")
+    print(f"Reddit: {data['Reddit']}")
+
+# Ejemplo de uso
+check_social_shares("https://www.ejemplo.com/articulo")
+                          
+#Cómo Utilizarlo
+##Obtén tu API Key: Regístrate en SharedCount y obtén una API key.
+##Configura la URL: Cambia el valor de url a la URL que deseas analizar.
+##Ejecuta el código: El script te mostrará cuántas veces ha sido compartida la URL en diversas plataformas sociales.
+
+# Casos de Uso
+##Análisis de contenido: Útil para ver qué contenido de tu sitio web es más popular en redes sociales.
+##Estrategia de contenido: Puedes usar los datos para ajustar tu estrategia de contenido, enfocándote en los temas que tienen mejor rendimiento en redes sociales.

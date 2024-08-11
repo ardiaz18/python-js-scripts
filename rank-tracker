@@ -1,0 +1,69 @@
+# Monitorización de Rankings de Palabras Clave en Google
+# Descripción: Este script te permitirá monitorizar el ranking de tus palabras clave en Google. Es ideal para realizar un seguimiento de la posición de tus páginas en las SERPs (Search Engine Results Pages) para ciertas palabras clave.
+import requests
+from bs4 import BeautifulSoup
+
+def check_keyword_position(keyword, domain, num_results=100):
+    query = keyword.replace(' ', '+')
+    url = f"https://www.google.com/search?q={query}&num={num_results}"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.find_all('div', class_='g')
+    
+    for index, result in enumerate(results):
+        link = result.find('a')['href']
+        if domain in link:
+            print(f"La palabra clave '{keyword}' está en la posición {index + 1} para el dominio '{domain}'.")
+            return index + 1
+    print(f"La palabra clave '{keyword}' no se encontró en las primeras {num_results} posiciones para el dominio '{domain}'.")
+    return None
+
+# Ejemplo de uso
+check_keyword_position("comprar zapatos online", "ejemplo.com")
+
+
+Aquí tienes más scripts en Python que puedes ejecutar directamente desde Google Colab. Estos scripts te ayudarán a automatizar diversas tareas y procesos relacionados con el análisis web y SEO. Los ejemplos incluyen explicaciones detalladas sobre cómo utilizarlos y los casos de uso.
+
+Scripts en Python para Automatización y Análisis SEO en Google Colab
+A continuación, te presento una serie de scripts en Python que puedes utilizar directamente desde Google Colab. Estos scripts están diseñados para facilitar la automatización de tareas comunes en SEO, análisis de sitios web, y más.
+
+1. Monitorización de Rankings de Palabras Clave en Google
+Descripción
+Este script te permitirá monitorizar el ranking de tus palabras clave en Google. Es ideal para realizar un seguimiento de la posición de tus páginas en las SERPs (Search Engine Results Pages) para ciertas palabras clave.
+
+Código
+python
+Copiar código
+import requests
+from bs4 import BeautifulSoup
+
+def check_keyword_position(keyword, domain, num_results=100):
+    query = keyword.replace(' ', '+')
+    url = f"https://www.google.com/search?q={query}&num={num_results}"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.find_all('div', class_='g')
+    
+    for index, result in enumerate(results):
+        link = result.find('a')['href']
+        if domain in link:
+            print(f"La palabra clave '{keyword}' está en la posición {index + 1} para el dominio '{domain}'.")
+            return index + 1
+    print(f"La palabra clave '{keyword}' no se encontró en las primeras {num_results} posiciones para el dominio '{domain}'.")
+    return None
+
+# Ejemplo de uso
+check_keyword_position("comprar zapatos online", "ejemplo.com")
+
+# Cómo Utilizarlo
+##Configura tu palabra clave: Cambia el valor del parámetro keyword a la palabra clave que deseas monitorizar.
+##Especifica tu dominio: Cambia el valor de domain al dominio del sitio web que estás analizando.
+##Ejecuta el código: El script realizará una búsqueda en Google y te dirá la posición en la que aparece tu dominio para esa palabra clave.
+
+#Casos de Uso
+##Monitorización de SEO: Este script es útil para mantener un seguimiento regular de tus posiciones en Google para palabras clave importantes.
+##Competencia: Puedes ajustar el dominio para ver cómo tus competidores están posicionados para las mismas palabras clave.

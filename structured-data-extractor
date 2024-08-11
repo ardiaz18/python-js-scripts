@@ -1,0 +1,291 @@
+#Extracción de Datos Estructurados de un Sitio Web
+#Descripción: Este script extrae datos estructurados (JSON-LD, Microdata) de una página web, lo cual es útil para comprobar si una página está correctamente marcada para SEO.
+
+import requests
+from bs4 import BeautifulSoup
+
+# URL de la página que deseas analizar
+url = "https://www.ejemplo.com"
+
+# Solicitar la página
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Extraer JSON-LD
+json_ld = soup.find('script', type='application/ld+json')
+if json_ld:
+    print("JSON-LD encontrado:")
+    print(json_ld.get_text())
+else:
+    print("No se encontró JSON-LD en la página.")
+
+# Extraer Microdata
+microdata = soup.find_all(itemtype=True)
+if microdata:
+    print("\nMicrodata encontrado:")
+    for data in microdata:
+        print(f"Tipo: {data['itemtype']}")
+else:
+    print("No se encontró Microdata en la página.")
+
+Dame scripts de python que pueda ejecutar directamente en Google Colab para la automatización de procesos y el análisis SEO
+ChatGPT
+Aquí tienes algunos scripts en Python que puedes ejecutar directamente en Google Colab para la automatización de procesos y el análisis SEO.
+
+1. Extracción de los títulos (Title Tags) y meta descripciones de un sitio web
+Este script utiliza BeautifulSoup para analizar el HTML de las páginas web y extraer las etiquetas de título y meta descripciones.
+
+python
+Copiar código
+import requests
+from bs4 import BeautifulSoup
+
+# URL de la página que deseas analizar
+url = "https://www.ejemplo.com"
+
+# Solicitar la página
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Extraer el título
+title = soup.find('title').get_text()
+print(f"Título: {title}")
+
+# Extraer la meta descripción
+meta_description = soup.find('meta', attrs={'name': 'description'})
+if meta_description:
+    print(f"Meta Descripción: {meta_description.get('content')}")
+else:
+    print("No se encontró meta descripción.")
+2. Generación de un Sitemap XML
+Este script puede generar un Sitemap básico para tu sitio web, útil para el rastreo por parte de motores de búsqueda.
+
+python
+Copiar código
+from urllib.parse import urlparse
+from urllib.robotparser import RobotFileParser
+import requests
+from bs4 import BeautifulSoup
+
+# Configura la URL de tu sitio web
+base_url = "https://www.ejemplo.com"
+
+# Función para verificar si una URL puede ser rastreada según el archivo robots.txt
+def is_allowed(url):
+    rp = RobotFileParser()
+    rp.set_url(urlparse(base_url).scheme + "://" + urlparse(base_url).netloc + "/robots.txt")
+    rp.read()
+    return rp.can_fetch("*", url)
+
+# Lista de URLs para incluir en el sitemap
+urls = [base_url]
+
+# Generar sitemap
+sitemap = open("sitemap.xml", "w")
+sitemap.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+sitemap.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+
+for url in urls:
+    if is_allowed(url):
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Añadir URL al sitemap
+        sitemap.write("   <url>\n")
+        sitemap.write(f"       <loc>{url}</loc>\n")
+        sitemap.write("       <priority>1.00</priority>\n")
+        sitemap.write("   </url>\n")
+
+sitemap.write('</urlset>')
+sitemap.close()
+
+print("Sitemap generado exitosamente.")
+3. Extracción de palabras clave de los títulos H1, H2, H3 de un sitio web
+Este script es útil para identificar las palabras clave usadas en los encabezados de las páginas.
+
+python
+Copiar código
+import requests
+from bs4 import BeautifulSoup
+
+# URL de la página que deseas analizar
+url = "https://www.ejemplo.com"
+
+# Solicitar la página
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Extraer los títulos H1, H2, H3
+headers = {}
+headers['H1'] = [h1.get_text().strip() for h1 in soup.find_all('h1')]
+headers['H2'] = [h2.get_text().strip() for h2 in soup.find_all('h2')]
+headers['H3'] = [h3.get_text().strip() for h3 in soup.find_all('h3')]
+
+# Mostrar los encabezados y las palabras clave
+for tag, contents in headers.items():
+    print(f"{tag}:")
+    for content in contents:
+        print(f"   {content}")
+4. Verificación de enlaces rotos en un sitio web
+Este script comprueba si hay enlaces rotos en un sitio web.
+
+python
+Copiar código
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+
+# URL de la página que deseas analizar
+url = "https://www.ejemplo.com"
+
+# Solicitar la página
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Buscar todos los enlaces
+links = soup.find_all('a', href=True)
+
+# Verificar cada enlace
+for link in links:
+    href = urljoin(url, link['href'])
+    try:
+        r = requests.head(href, timeout=5)
+        if r.status_code >= 400:
+            print(f"Enlace roto: {href} - Estado: {r.status_code}")
+        else:
+            print(f"Enlace válido: {href} - Estado: {r.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Enlace roto: {href} - Error: {e}")
+5. Análisis de la velocidad de carga de la página con Lighthouse (requiere entorno local)
+Este script automatiza el uso de Lighthouse para obtener un informe de rendimiento de la página. Este script debe ejecutarse en un entorno que soporte Lighthouse, como un entorno local o un servidor que tenga Chrome y Node.js instalados.
+
+python
+Copiar código
+!npm install -g lighthouse
+
+# URL de la página que deseas analizar
+url = "https://www.ejemplo.com"
+
+# Ejecutar Lighthouse
+!lighthouse {url} --output html --output-path ./reporte.html
+
+print("Análisis completado. Revisa el archivo reporte.html para ver los resultados.")
+Puedes adaptar estos scripts según las necesidades específicas de tu análisis SEO. Son un buen punto de partida para automatizar tareas comunes en SEO y análisis web.
+
+Dame más scripts para utilizar directamente desde Google colab que faciliten la automatización de tareas y procesos. Explícame en detalle cómo utilizarlo y casos de uso, todo el texto en formato markdown
+ChatGPT
+Aquí tienes más scripts en Python que puedes ejecutar directamente desde Google Colab. Estos scripts te ayudarán a automatizar diversas tareas y procesos relacionados con el análisis web y SEO. Los ejemplos incluyen explicaciones detalladas sobre cómo utilizarlos y los casos de uso.
+
+Scripts en Python para Automatización y Análisis SEO en Google Colab
+A continuación, te presento una serie de scripts en Python que puedes utilizar directamente desde Google Colab. Estos scripts están diseñados para facilitar la automatización de tareas comunes en SEO, análisis de sitios web, y más.
+
+1. Monitorización de Rankings de Palabras Clave en Google
+Descripción
+Este script te permitirá monitorizar el ranking de tus palabras clave en Google. Es ideal para realizar un seguimiento de la posición de tus páginas en las SERPs (Search Engine Results Pages) para ciertas palabras clave.
+
+Código
+python
+Copiar código
+import requests
+from bs4 import BeautifulSoup
+
+def check_keyword_position(keyword, domain, num_results=100):
+    query = keyword.replace(' ', '+')
+    url = f"https://www.google.com/search?q={query}&num={num_results}"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.find_all('div', class_='g')
+    
+    for index, result in enumerate(results):
+        link = result.find('a')['href']
+        if domain in link:
+            print(f"La palabra clave '{keyword}' está en la posición {index + 1} para el dominio '{domain}'.")
+            return index + 1
+    print(f"La palabra clave '{keyword}' no se encontró en las primeras {num_results} posiciones para el dominio '{domain}'.")
+    return None
+
+# Ejemplo de uso
+check_keyword_position("comprar zapatos online", "ejemplo.com")
+Cómo Utilizarlo
+Configura tu palabra clave: Cambia el valor del parámetro keyword a la palabra clave que deseas monitorizar.
+Especifica tu dominio: Cambia el valor de domain al dominio del sitio web que estás analizando.
+Ejecuta el código: El script realizará una búsqueda en Google y te dirá la posición en la que aparece tu dominio para esa palabra clave.
+Casos de Uso
+Monitorización de SEO: Este script es útil para mantener un seguimiento regular de tus posiciones en Google para palabras clave importantes.
+Competencia: Puedes ajustar el dominio para ver cómo tus competidores están posicionados para las mismas palabras clave.
+2. Análisis de Popularidad de Contenidos en Redes Sociales
+Descripción
+Este script te permite analizar la popularidad de URLs específicas en las redes sociales (por ejemplo, cuántas veces ha sido compartida una URL). Aquí usamos SharedCount API, que es una herramienta popular para este tipo de análisis.
+
+Código
+python
+Copiar código
+import requests
+
+# API Key de SharedCount (obtén la tuya en https://www.sharedcount.com/)
+api_key = "TU_API_KEY_AQUÍ"
+
+def check_social_shares(url):
+    api_url = f"https://api.sharedcount.com/v1.0/?url={url}&apikey={api_key}"
+    response = requests.get(api_url)
+    data = response.json()
+    
+    print(f"Análisis de URL: {url}")
+    print(f"Facebook Total: {data['Facebook']['total_count']}")
+    print(f"LinkedIn: {data['LinkedIn']}")
+    print(f"Pinterest: {data['Pinterest']}")
+    print(f"StumbleUpon: {data['StumbleUpon']}")
+    print(f"Reddit: {data['Reddit']}")
+
+# Ejemplo de uso
+check_social_shares("https://www.ejemplo.com/articulo")
+Cómo Utilizarlo
+Obtén tu API Key: Regístrate en SharedCount y obtén una API key.
+Configura la URL: Cambia el valor de url a la URL que deseas analizar.
+Ejecuta el código: El script te mostrará cuántas veces ha sido compartida la URL en diversas plataformas sociales.
+Casos de Uso
+Análisis de contenido: Útil para ver qué contenido de tu sitio web es más popular en redes sociales.
+Estrategia de contenido: Puedes usar los datos para ajustar tu estrategia de contenido, enfocándote en los temas que tienen mejor rendimiento en redes sociales.
+3. Extracción de Datos Estructurados de un Sitio Web
+Descripción
+Este script extrae datos estructurados (JSON-LD, Microdata) de una página web, lo cual es útil para comprobar si una página está correctamente marcada para SEO.
+
+Código
+python
+Copiar código
+import requests
+from bs4 import BeautifulSoup
+
+# URL de la página que deseas analizar
+url = "https://www.ejemplo.com"
+
+# Solicitar la página
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Extraer JSON-LD
+json_ld = soup.find('script', type='application/ld+json')
+if json_ld:
+    print("JSON-LD encontrado:")
+    print(json_ld.get_text())
+else:
+    print("No se encontró JSON-LD en la página.")
+
+# Extraer Microdata
+microdata = soup.find_all(itemtype=True)
+if microdata:
+    print("\nMicrodata encontrado:")
+    for data in microdata:
+        print(f"Tipo: {data['itemtype']}")
+else:
+    print("No se encontró Microdata en la página.")
+
+# Cómo Utilizarlo
+##Introduce la URL: Cambia el valor de url a la página que deseas analizar.
+##Ejecuta el código: El script te mostrará los datos estructurados encontrados en la página.
+
+#Casos de Uso
+##Verificación de SEO: Útil para asegurarte de que tu página tiene implementados correctamente los datos estructurados para SEO.
+##Diagnóstico: Si estás experimentando problemas con tus rich snippets en Google, este script puede ayudarte a identificar posibles errores en tu marcado.

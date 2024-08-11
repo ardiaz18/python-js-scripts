@@ -1,0 +1,24 @@
+#Comprobación de Redirecciones de URLs
+#Descripción: Este script permite verificar si una URL redirige correctamente y muestra el estado de las redirecciones
+
+import requests
+
+def check_redirects(url):
+    try:
+        response = requests.get(url, allow_redirects=True)
+        for resp in response.history:
+            print(f"Redirección: {resp.url} - Estado: {resp.status_code}")
+        print(f"Destino final: {response.url} - Estado: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error al intentar acceder a {url}: {e}")
+
+# Ejemplo de uso
+check_redirects("http://www.ejemplo.com/antigua-url")
+
+#Cómo Utilizarlo
+##Introduce la URL: Cambia el valor de url a la URL que deseas comprobar.
+##Ejecuta el código: El script te mostrará todas las redirecciones por las que pasa la URL y su estado.
+
+#Casos de Uso
+##Gestión de redirecciones: Útil para verificar que tus redirecciones 301 están funcionando correctamente.
+##SEO Técnico: Asegúrate de que no haya cadenas de redirecciones que puedan afectar negativamente al SEO.
