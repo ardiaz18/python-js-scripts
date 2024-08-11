@@ -1,0 +1,38 @@
+from urllib.parse import urlparse
+from urllib.robotparser import RobotFileParser
+import requests
+from bs4 import BeautifulSoup
+
+# Configura la URL de tu sitio web
+base_url = "https://www.ejemplo.com"
+
+# Función para verificar si una URL puede ser rastreada según el archivo robots.txt
+def is_allowed(url):
+    rp = RobotFileParser()
+    rp.set_url(urlparse(base_url).scheme + "://" + urlparse(base_url).netloc + "/robots.txt")
+    rp.read()
+    return rp.can_fetch("*", url)
+
+# Lista de URLs para incluir en el sitemap
+urls = [base_url]
+
+# Este script puede generar un Sitemap básico para tu sitio web, útil para el rastreo por parte de motores de búsqueda.
+sitemap = open("sitemap.xml", "w")
+sitemap.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+sitemap.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+
+for url in urls:
+    if is_allowed(url):
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Añadir URL al sitemap
+        sitemap.write("   <url>\n")
+        sitemap.write(f"       <loc>{url}</loc>\n")
+        sitemap.write("       <priority>1.00</priority>\n")
+        sitemap.write("   </url>\n")
+
+sitemap.write('</urlset>')
+sitemap.close()
+
+print("Sitemap generado exitosamente.")
