@@ -1,0 +1,23 @@
+# Este script es útil para identificar las palabras clave usadas en los encabezados de las páginas.
+
+import requests
+from bs4 import BeautifulSoup
+
+# URL de la página que deseas analizar
+url = "https://www.ejemplo.com"
+
+# Solicitar la página
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Extraer los títulos H1, H2, H3
+headers = {}
+headers['H1'] = [h1.get_text().strip() for h1 in soup.find_all('h1')]
+headers['H2'] = [h2.get_text().strip() for h2 in soup.find_all('h2')]
+headers['H3'] = [h3.get_text().strip() for h3 in soup.find_all('h3')]
+
+# Mostrar los encabezados y las palabras clave
+for tag, contents in headers.items():
+    print(f"{tag}:")
+    for content in contents:
+        print(f"   {content}")
