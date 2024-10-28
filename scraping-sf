@@ -1,0 +1,70 @@
+// Script para extrear TEXTO + HEADINGS de todas las urls con Screaming Frog
+
+1. Abre Screaming Frog
+1. Configuración > Personalizado > JavaScript personalizado
+2. Selecciona Añadir
+3. En la fila que se ha creado ves al final y selecciona la casilla JS ✏️
+4. En el panel de la derecha pega el script que te dejaré abajo
+5. (EXTRA) En la línea 50 del script te viene la instrucción para insertar el XPATH donde deseas que pare. Si quieres que siga hasta el final, déjalo como null.
+
+
+
+// Function to remove scripts, styles, unnecessary sections, and label headings
+function cleanTextUntil(element, stopElement = null) {
+ // Remove script, style, nav, footer, and aside elements
+ element.querySelectorAll('script, style, nav, footer, aside').forEach(e => e.remove());
+ 
+ let text = '';
+ let foundFirstHeading = false;
+ let shouldStop = false; // Variable to stop when we reach the target XPath element
+
+ const traverse = (node) => {
+ // Stop when reaching the target element if provided
+ if (stopElement && node === stopElement) {
+ shouldStop = true;
+ return;
+ }
+
+ if (shouldStop) return; // Stop further traversal
+
+ if (node.nodeType === Node.TEXT_NODE) {
+ if (foundFirstHeading && node.parentNode && !['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(node.parentNode.tagName)) {
+ text += node.textContent.trim() + '\n';
+ }
+ } else if (node.nodeType === Node.ELEMENT_NODE) {
+ // Skip common non-content elements
+ if (['NAV', 'FOOTER', 'ASIDE'].includes(node.tagName)) return;
+ if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(node.tagName)) {
+ foundFirstHeading = true;
+ const headingText = node.textContent.trim();
+ text += `\n${node.tagName}: ${headingText}\n`;
+ }
+ node.childNodes.forEach(traverse);
+ }
+ };
+
+ traverse(element);
+
+ // Remove multiple line breaks
+ text = text.replace(/\n\s*\n+/g, '\n');
+
+ return text.trim();
+}
+
+// Function to get the element by XPath
+function getElementByXPath(xpath) {
+ if (!xpath) return null; // Return null if no XPath is provided
+ return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
+
+// Example XPath (you can set this to null if you don't want to stop at any point)
+const xpath = null ; // Change this to your XPath (ej: 'RUTA XPATH') or leave as null if no stopping point is needed
+
+// Get the element at the specified XPath, or null if no XPath is provided
+const stopElement = getElementByXPath(xpath);
+
+// If the element exists, clean the content until that element, otherwise extract the full body
+let bodyText = cleanTextUntil(document.body, stopElement);
+
+// Return the cleaned body text to Screaming Frog
+return seoSpider.data(bodyText);
