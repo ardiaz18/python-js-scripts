@@ -1,13 +1,11 @@
 # python-seo
-Google Colab es una plataforma gratuita que permite escribir y ejecutar código en Python en tu navegador, y viene preinstalada con muchas bibliotecas populares.
 
-Aquí te explico cómo hacerlo paso a paso:
+# scraping-sf
+Script para extrear TEXTO + HEADINGS de todas las urls con Screaming Frog
 
-1. Acceder a Google Colab
-Abre Google Colab en tu navegador.
-
-2. Crear un Nuevo Notebook
-Haz clic en "Nuevo cuaderno" para crear un nuevo notebook de Python.
-
-3. Escribir y Ejecutar Código
-Puedes copiar y pegar los scripts de Python que mencioné anteriormente directamente en las celdas del notebook y ejecutarlos.
+1. Abre Screaming Frog
+1. Configuración > Personalizado > JavaScript personalizado
+2. Selecciona Añadir
+3. En la fila que se ha creado ves al final y selecciona la casilla JS
+4. En el panel de la derecha pega el script que te dejaré abajo
+5. En la línea 50 del script te viene la instrucción para insertar el XPATH donde deseas que pare. Si quieres que siga hasta el final, déjalo como null.
