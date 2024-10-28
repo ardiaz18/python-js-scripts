@@ -1,4 +1,4 @@
-# python-seo
+# scripts de automatización (JS y python)
 
 # scraping-sf
 Script para extrear TEXTO + HEADINGS de todas las urls con Screaming Frog
