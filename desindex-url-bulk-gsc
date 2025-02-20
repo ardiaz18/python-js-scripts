@@ -8,7 +8,7 @@
 // - Press enter on the keyboard
 // 
 // Remove URLs in bulk from Google Search Console, replace the example URLs with yours
-// // Change the number by the number of URLs
+// // Change the number "cantidad" by the number of URLs
 
 var array = [
 
