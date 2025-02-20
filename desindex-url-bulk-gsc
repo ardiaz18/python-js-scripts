@@ -1,5 +1,14 @@
-//Eliminar url de forma masiva google search console, cambia las url de ejemplo por las tuyas
-//Cambiar cantidad por número de URLs
+// Description
+// 
+// - Go to GSC > Temporarily deindex
+// - First step is to open Chrome DevTools (F12) in this same window
+// - Click on the "Console" section
+// - Paste this script (already customized)
+// - Stay on the window where GSC is open
+// - Press enter on the keyboard
+// 
+// Remove URLs in bulk from Google Search Console, replace the example URLs with yours
+// // Change the number by the number of URLs
 
 var array = [
 
